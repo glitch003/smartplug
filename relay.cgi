@@ -6,9 +6,23 @@ echo
 
 RELAY_CTRL=/sys/class/leds/tp-link:blue:relay/brightness
 
-CURRENT_STATE="`cat $RELAY_CTRL`"
-
-NEW_STATE=$(($CURRENT_STATE - 1))
-NEW_STATE=$(($NEW_STATE * -1))     
-
-echo $NEW_STATE > $RELAY_CTRL
+case "$QUERY_STRING" in
+  state) 
+    case "`cat $RELAY_CTRL`" in
+      0) echo "OFF";;
+      1) echo "ON" ;;
+    esac;;
+  on) 
+    echo 1 > $RELAY_CTRL
+    echo OK;;
+  off) 
+    echo 0 > $RELAY_CTRL
+    echo OK;;
+  toggle)
+    case "`cat $RELAY_CTRL`" in
+      0) echo 1 > $RELAY_CTRL
+         echo "ON";;
+      1) echo 0 > $RELAY_CTRL
+         echo "OFF" ;;
+    esac;;    
+esac
